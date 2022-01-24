@@ -1,0 +1,29 @@
+﻿@page "/"
+@using RestSharp
+@using System.Text
+
+<input @bind="@InputText"></input>
+<button @onclick="Click">Convert</button>
+
+@if (ImageSource != null)
+{
+    <br />
+
+    <img src="@ImageSource" />
+}
+
+@code {
+    public string? InputText { get; set; }
+    public string? Response { get; set; }
+    public string? ImageSource { get; set; }
+
+    public void Click()
+    {
+        var client = new RestClient($"http://localhost:5253/QRGenerator/{InputText}");
+        var request = new RestRequest();
+        var response = client.Execute(request);
+        Response = response.Content;
+        ImageSource = String.Format("data:image/png;base64,{0}", Response);
+        this.StateHasChanged();
+    }
+}
